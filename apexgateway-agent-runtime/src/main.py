@@ -1,5 +1,6 @@
 import os
 import uvicorn
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from pydantic import BaseModel
 from opentelemetry import trace
@@ -9,7 +10,14 @@ from src.aws_secrets import fetch_compliance_secrets
 
 tracer = setup_telemetry("apexgateway-agent-runtime")
 
-app = FastAPI(title="ApexGateway Agent Runtime", version="1.0.0")
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Pre-warm compliance secrets during startup
+    fetch_compliance_secrets()
+    yield
+    flush_telemetry()
+
+app = FastAPI(title="ApexGateway Agent Runtime", version="1.0.0", lifespan=lifespan)
 FastAPIInstrumentor.instrument_app(app)
 
 class TransactionAlert(BaseModel):
@@ -29,10 +37,10 @@ async def evaluate_alert(alert: TransactionAlert):
         span.set_attribute("alert.account_id", alert.account_id)
         span.set_attribute("alert.amount_usd", alert.amount_usd)
 
-        with tracer.start_as_current_span("aws.secretsmanager.fetch_keys"):
-            secrets = fetch_compliance_secrets()
-            signing_key = secrets.get("signing_key", "default-key")
-            span.set_attribute("security.key_resolved", bool(signing_key))
+        # In-memory zero-latency cache hit
+        secrets = fetch_compliance_secrets()
+        signing_key = secrets.get("signing_key", "default-key")
+        span.set_attribute("security.key_resolved", bool(signing_key))
 
         with tracer.start_as_current_span("fsm.grpc_handoff") as grpc_span:
             grpc_metadata = get_traceparent_metadata()
@@ -44,9 +52,6 @@ async def evaluate_alert(alert: TransactionAlert):
         span.set_attribute("evaluation.verdict", status)
         trace_id = format(trace.get_current_span().get_span_context().trace_id, "032x")
 
-    # Flush spans immediately to Jaeger before returning
-    flush_telemetry()
-
     return {
         "status": status,
         "final_fsm_state": 7 if is_fraud else 4,
@@ -56,4 +61,4 @@ async def evaluate_alert(alert: TransactionAlert):
     }
 
 if __name__ == "__main__":
-    uvicorn.run("src.main:app", host="0.0.0.0", port=8000, reload=False)
+    uvicorn.run("src.main:app", host="0.0.0.0", port=8000, reload=False, log_level="warning")
