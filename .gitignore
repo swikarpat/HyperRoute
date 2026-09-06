@@ -35,3 +35,9 @@ apexgateway-ui/.vite/
 /tmp/apexgateway_rocksdb/
 *.sst
 *.wal
+
+# Terraform Local Cache & Providers
+**/.terraform/
+*.tfstate
+*.tfstate.*
+.terraform.lock.hcl
