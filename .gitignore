@@ -1,0 +1,37 @@
+# Operating System
+.DS_Store
+Thumbs.db
+
+# C++ Build & Binaries
+apexgateway-fsm-engine/build/
+apexgateway-fsm-engine/.cache/
+*.o
+*.so
+*.dylib
+fsm_engine_server
+
+# Python ADK & Virtual Environments
+apexgateway-agent-runtime/.venv/
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+
+# Java Spring Boot & Gradle
+apexgateway-gateway/.gradle/
+apexgateway-gateway/build/
+apexgateway-gateway/.settings/
+apexgateway-gateway/.project
+apexgateway-gateway/.classpath
+
+# Node / React UI
+apexgateway-ui/node_modules/
+apexgateway-ui/dist/
+apexgateway-ui/.vite/
+*.log
+
+# Local Storage Engines & Telemetry Dumps
+/tmp/apexgateway_rocksdb/
+*.sst
+*.wal

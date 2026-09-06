@@ -1,0 +1,28 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: apexgateway-ingress
+
+apexgateway:
+  agent-runtime-url: "http://localhost:8000"
+  fsm-engine-host: "localhost"
+  fsm-engine-port: 50051
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      adkAgentService:
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10s
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
