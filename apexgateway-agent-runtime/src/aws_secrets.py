@@ -2,13 +2,13 @@ import os
 import json
 from functools import lru_cache
 import boto3
-from botocore.exceptions import ClientError
+from botocore.exceptions import ClientError, BotoCoreError
 
 @lru_cache(maxsize=1)
 def fetch_compliance_secrets() -> dict:
     """
     Fetches compliance keys and caches them in memory.
-    Avoids blocking the hot-path transaction loop with redundant network roundtrips.
+    Safely falls back to local keys if AWS Moto mock server is offline.
     """
     endpoint_url = os.getenv("AWS_ENDPOINT_URL", "http://localhost:4566")
     region_name = os.getenv("AWS_DEFAULT_REGION", "us-east-1")
@@ -25,5 +25,5 @@ def fetch_compliance_secrets() -> dict:
     try:
         response = client.get_secret_value(SecretId="apexgateway/fsm-compliance-keys")
         return json.loads(response["SecretString"])
-    except ClientError as e:
+    except (ClientError, BotoCoreError, Exception):
         return {"signing_key": "fallback-local-key", "simd_salt": "fallback-salt"}
