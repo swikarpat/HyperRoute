@@ -42,3 +42,18 @@ apexgateway-ui/.vite/
 *.sst
 *.wal
 apexgateway-infra/setup_*.sh
+
+# IDE & Editor files
+.vscode/
+.idea/
+*.swp
+
+# Python caches
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+
+# C++ Build outputs
+apexgateway-fsm-engine/build/
+/tmp/apexgateway_rocksdb
