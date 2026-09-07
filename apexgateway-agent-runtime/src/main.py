@@ -4,8 +4,8 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from opentelemetry import trace
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+from google_adk.common.types import AgentTask
 
-from src.google_adk.common.types import AgentTask
 from src.telemetry import setup_telemetry, flush_telemetry, get_traceparent_metadata
 from src.aws_secrets import fetch_compliance_secrets
 from src.classifier import classifier
@@ -42,6 +42,7 @@ async def evaluate_alert(alert: TransactionAlert):
         alert_dict = alert.model_dump()
         investigation_dossier = None
 
+        # Tier 1: Sub-Millisecond Tabular Screening
         with tracer.start_as_current_span("tier1.tabular_ml_score") as ml_span:
             risk_score, is_suspicious, features = classifier.predict(alert_dict)
             ml_span.set_attribute("ml.risk_score", round(risk_score, 4))
@@ -50,6 +51,7 @@ async def evaluate_alert(alert: TransactionAlert):
         span.set_attribute("alert.account_id", alert.account_id)
         span.set_attribute("alert.amount_usd", alert.amount_usd)
 
+        # Fast-Path vs. Tier 2 Multi-Agent Investigation
         if not is_suspicious:
             proposed_action = "CLEAR_TRANSACTION"
             routing_tier = "TIER_1_STATISTICAL_FAST_PATH"
@@ -65,15 +67,16 @@ async def evaluate_alert(alert: TransactionAlert):
                 graph_result = await investigation_graph.run(AgentTask(data=task_data))
                 final_message = await graph_result.output.get()
                 investigation_dossier = final_message.data
-
+                
                 proposed_action = investigation_dossier.get("recommended_fsm_action", "ESCALATED_TO_HUMAN")
                 routing_tier = "TIER_2_MULTI_AGENT_INVESTIGATION"
                 total_steps = 6
 
+        # Tier 3: Deterministic C++20 FSM & RocksDB Commit
         trace_id = format(trace.get_current_span().get_span_context().trace_id, "032x")
         grpc_metadata = get_traceparent_metadata()
 
-        final_fsm_state, audit_hash = fsm_client.transition_state(
+        final_fsm_state, audit_hash, fsm_latency_us = fsm_client.transition_state(
             trace_id=trace_id,
             alert_data=alert_dict,
             action_name=proposed_action,
@@ -87,6 +90,7 @@ async def evaluate_alert(alert: TransactionAlert):
         "statistical_risk_score": round(risk_score, 4),
         "final_fsm_state": final_fsm_state,
         "audit_dossier_hash": audit_hash,
+        "fsm_transition_latency": f"{fsm_latency_us} μs" if fsm_latency_us > 0 else "FALLBACK_MOCK",
         "total_steps_executed": total_steps,
         "trace_id": trace_id,
         "metadata_propagated": dict(grpc_metadata)

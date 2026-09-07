@@ -2,25 +2,19 @@
 #include <memory>
 #include <string>
 #include <csignal>
+#include <thread>
 #include <grpcpp/grpcpp.h>
 #include "fsm_service_impl.hpp"
 #include "rocksdb_storage.hpp"
 
-std::unique_ptr<grpc::Server> g_server;
-
-void handle_signal([[maybe_unused]] int signal)
-{
-    std::cout << "\n[Signal] Shutting down FSM Engine server gracefully..." << std::endl;
-    if (g_server)
-    {
-        g_server->Shutdown();
-    }
-}
-
 int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv)
 {
-    std::signal(SIGINT, handle_signal);
-    std::signal(SIGTERM, handle_signal);
+    // Block SIGINT and SIGTERM so they can be handled synchronously by a dedicated thread
+    sigset_t sigset;
+    sigemptyset(&sigset);
+    sigaddset(&sigset, SIGINT);
+    sigaddset(&sigset, SIGTERM);
+    pthread_sigmask(SIG_BLOCK, &sigset, nullptr);
 
     const std::string server_address = "0.0.0.0:50051";
     const std::string rocksdb_path = "/tmp/apexgateway_rocksdb";
@@ -37,14 +31,26 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv)
         builder.SetMaxReceiveMessageSize(16 * 1024 * 1024);
         builder.SetMaxSendMessageSize(16 * 1024 * 1024);
 
-        g_server = builder.BuildAndStart();
+        std::unique_ptr<grpc::Server> server = builder.BuildAndStart();
         std::cout << "==================================================" << std::endl;
         std::cout << "  ApexGateway C++20 FSM Compliance Engine Running  " << std::endl;
         std::cout << "  Endpoint: " << server_address << std::endl;
         std::cout << "  RocksDB:  " << rocksdb_path << std::endl;
         std::cout << "==================================================" << std::endl;
 
-        g_server->Wait();
+        // Dedicated thread waits for shutdown signals outside signal handler context
+        std::thread signal_thread([&server, &sigset]() {
+            int sig = 0;
+            sigwait(&sigset, &sig);
+            std::cout << "\n[Signal " << sig << "] Shutting down FSM Engine server gracefully..." << std::endl;
+            server->Shutdown();
+        });
+
+        server->Wait();
+        if (signal_thread.joinable())
+        {
+            signal_thread.join();
+        }
     }
     catch (const std::exception &e)
     {
