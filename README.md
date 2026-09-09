@@ -78,7 +78,6 @@ Java 21 (LTS)
 Gradle 8.7+
 Redis 7.x (running on localhost:6379)
 Execution
-Bash
 # Clone and enter repository
 git clone [https://github.com/swikarpat/HyperRoute.git](https://github.com/swikarpat/HyperRoute.git)
 cd HyperRoute
@@ -86,8 +85,6 @@ cd HyperRoute
 # Compile and run via Gradle
 ./gradlew clean bootRun
 Health Verification
-Bash
 curl -i http://localhost:8080/actuator/health
 Expected response:
-JSON
 {"status":"UP","components":{"redis":{"status":"UP"},"circuitBreakers":{"status":"UP"}}}
