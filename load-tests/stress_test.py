@@ -53,7 +53,7 @@ async def send_worker(
 
 async def run_load_test():
     print(f"\n=======================================================")
-    print(f"  ApexGateway Enterprise Synthetic Load Test Harness   ")
+    print(f"  HyperRoute Enterprise Synthetic Load Test Harness   ")
     print(f"=======================================================")
     print(f" Target Endpoint:   {TARGET_URL}")
     print(f" Concurrency Level: {CONCURRENCY_LEVEL} workers")

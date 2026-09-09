@@ -1,0 +1,16 @@
+{
+  "folders": [
+    { "name": "00-Contracts", "path": "contracts" },
+    { "name": "01-Java-Gateway", "path": "gateway" },
+    { "name": "02-CPP-FSMEngine", "path": "fsm-engine" },
+    { "name": "03-Python-AgentRuntime", "path": "agent-runtime" },
+    { "name": "04-React-UI", "path": "frontend" },
+    { "name": "05-Infra-Telemetry", "path": "infrastructure" }
+  ],
+  "settings": {
+    "editor.formatOnSave": true,
+    "files.trimTrailingWhitespace": true,
+    "python.defaultInterpreterPath": "${workspaceFolder:03-Python-AgentRuntime}/.venv/bin/python",
+    "java.configuration.updateBuildConfiguration": "interactive"
+  }
+}
