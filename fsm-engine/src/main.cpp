@@ -17,12 +17,12 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv)
     pthread_sigmask(SIG_BLOCK, &sigset, nullptr);
 
     const std::string server_address = "0.0.0.0:50051";
-    const std::string rocksdb_path = "/tmp/apexgateway_rocksdb";
+    const std::string rocksdb_path = "/tmp/hyperroute_rocksdb";
 
     try
     {
-        apexgateway::storage::RocksStorageEngine storage(rocksdb_path);
-        apexgateway::service::FsmComplianceServiceImpl service(storage);
+        hyperroute::storage::RocksStorageEngine storage(rocksdb_path);
+        hyperroute::service::FsmComplianceServiceImpl service(storage);
 
         grpc::ServerBuilder builder;
         builder.AddListeningPort(server_address, grpc::InsecureServerCredentials());
@@ -33,7 +33,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv)
 
         std::unique_ptr<grpc::Server> server = builder.BuildAndStart();
         std::cout << "==================================================" << std::endl;
-        std::cout << "  ApexGateway C++20 FSM Compliance Engine Running  " << std::endl;
+        std::cout << "  HyperRoute C++20 FSM Compliance Engine Running  " << std::endl;
         std::cout << "  Endpoint: " << server_address << std::endl;
         std::cout << "  RocksDB:  " << rocksdb_path << std::endl;
         std::cout << "==================================================" << std::endl;

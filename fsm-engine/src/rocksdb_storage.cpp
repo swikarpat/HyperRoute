@@ -4,7 +4,7 @@
 #include <stdexcept>
 #include <iostream>
 
-namespace apexgateway::storage
+namespace hyperroute::storage
 {
 
     RocksStorageEngine::RocksStorageEngine(const std::string &db_path)
@@ -38,7 +38,6 @@ namespace apexgateway::storage
             {"cf_fsm_history", history_cf},
             {"cf_guardrail_violations", violations_cf}};
 
-        // RocksDB 11.x requires std::unique_ptr<DB>*
         rocksdb::Status status = rocksdb::DB::Open(db_options, db_path, column_families, &handles_, &db_);
         if (!status.ok())
         {
@@ -56,7 +55,6 @@ namespace apexgateway::storage
                 db_->DestroyColumnFamilyHandle(handle);
             }
         }
-        // db_ automatically releases memory via std::unique_ptr
     }
 
     void RocksStorageEngine::put_scratchpad(const std::string &key, const std::string &value)
@@ -94,4 +92,4 @@ namespace apexgateway::storage
         return results;
     }
 
-} // namespace apexgateway::storage
+} // namespace hyperroute::storage

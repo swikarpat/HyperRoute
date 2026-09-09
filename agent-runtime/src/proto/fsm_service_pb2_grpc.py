@@ -36,7 +36,7 @@ class FSMServiceStub(object):
             channel: A grpc.Channel.
         """
         self.TransitionState = channel.unary_unary(
-                '/apexgateway.FSMService/TransitionState',
+                '/hyperroute.FSMService/TransitionState',
                 request_serializer=fsm__service__pb2.TransitionRequest.SerializeToString,
                 response_deserializer=fsm__service__pb2.TransitionResponse.FromString,
                 _registered_method=True)
@@ -63,9 +63,9 @@ def add_FSMServiceServicer_to_server(servicer, server):
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'apexgateway.FSMService', rpc_method_handlers)
+            'hyperroute.FSMService', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
-    server.add_registered_method_handlers('apexgateway.FSMService', rpc_method_handlers)
+    server.add_registered_method_handlers('hyperroute.FSMService', rpc_method_handlers)
 
 
  # This class is part of an EXPERIMENTAL API.
@@ -87,7 +87,7 @@ class FSMService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/apexgateway.FSMService/TransitionState',
+            '/hyperroute.FSMService/TransitionState',
             fsm__service__pb2.TransitionRequest.SerializeToString,
             fsm__service__pb2.TransitionResponse.FromString,
             options,

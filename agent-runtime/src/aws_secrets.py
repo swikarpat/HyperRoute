@@ -23,7 +23,7 @@ def fetch_compliance_secrets() -> dict:
     )
 
     try:
-        response = client.get_secret_value(SecretId="apexgateway/fsm-compliance-keys")
+        response = client.get_secret_value(SecretId="hyperroute/fsm-compliance-keys")
         return json.loads(response["SecretString"])
     except (ClientError, BotoCoreError, Exception):
         return {"signing_key": "fallback-local-key", "simd_salt": "fallback-salt"}

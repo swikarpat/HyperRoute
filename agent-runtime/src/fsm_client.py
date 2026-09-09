@@ -2,9 +2,9 @@ import os
 import hashlib
 import grpc
 from opentelemetry import trace
-from src.proto import fsm_engine_pb2, fsm_engine_pb2_grpc
+from src.proto.hyperroute.v1 import fsm_engine_pb2, fsm_engine_pb2_grpc
 
-tracer = trace.get_tracer("apexgateway-fsm-client")
+tracer = trace.get_tracer("hyperroute-fsm-client")
 
 # Map ADK Agent actions to canonical C++20 FSM AgentStates
 STATE_ACTION_MAP = {
@@ -40,14 +40,13 @@ class FSMClient:
             )
             workflow_id = alert_data.get("account_id", "ACC-UNKNOWN")
 
-            # Construct SHA-256 payload hash representing the transaction and findings
             dossier_str = str(agent_dossier) if agent_dossier else "FAST_PATH"
             raw_payload = f"{workflow_id}:{action_name}:{dossier_str}".encode("utf-8")
             payload_hash = hashlib.sha256(raw_payload).digest()
 
             request = fsm_engine_pb2.StateTransitionRequest(
                 workflow_id=workflow_id,
-                agent_id="apexgateway-agent-runtime",
+                agent_id="hyperroute-agent-runtime",
                 from_state=fsm_engine_pb2.AGENT_STATE_IDLE,
                 to_state=target_state,
                 step_index=1,
@@ -60,7 +59,6 @@ class FSMClient:
             )
 
             try:
-                # Live C++20 gRPC Execution (Target SLA: < 15 μs)
                 response = self.stub.ValidateTransition(request, metadata=metadata, timeout=2.0)
                 
                 latency_us = round(response.step_latency_ns / 1000.0, 2)

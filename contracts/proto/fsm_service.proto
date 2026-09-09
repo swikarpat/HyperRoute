@@ -1,12 +1,11 @@
 syntax = "proto3";
 
-package apexgateway;
+package hyperroute;
 
 import "google/protobuf/timestamp.proto";
 
-option go_package = "github.com/swikarpat/apexgateway-contracts/fsm";
+option go_package = "github.com/swikarpat/hyperroute-contracts/fsm";
 
-// Proposed actions from ADK agents
 enum FSMAction {
   FSM_ACTION_UNKNOWN = 0;
   CLEAR_TRANSACTION = 1;
@@ -17,30 +16,22 @@ enum FSMAction {
   REJECT_TRANSACTION = 6;
 }
 
-// Request to advance a state step in the deterministic engine
 message TransitionRequest {
   string trace_id = 1;
   string alert_id = 2;
   FSMAction proposed_action = 3;
-  
-  // JSON string containing all ADK agent findings (dossier data) for RocksDB WAL auditing
   string findings = 4; 
 }
 
-// Response from the C++20 engine
 message TransitionResponse {
   bool success = 1;
   int32 resulting_state = 2;
   string message = 3;
   string trace_id = 4;
-  
-  // SHA-256 hash of the committed forensic dossier stored in RocksDB
   string audit_dossier_hash = 5; 
   google.protobuf.Timestamp commit_timestamp = 6;
 }
 
-// Deterministic State Machine Service
 service FSMService {
-  // Hot path: validates agent proposed actions against regulatory transition matrix
   rpc TransitionState (TransitionRequest) returns (TransitionResponse);
 }

@@ -34,6 +34,9 @@ spring:
               args:
                 name: paymentsCircuitBreaker
                 fallbackUri: forward:/fallback/payments
+                statusCodes:
+                  - 500
+                  - 503
 
 resilience4j:
   circuitbreaker:

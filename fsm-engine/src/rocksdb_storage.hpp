@@ -5,7 +5,7 @@
 #include <vector>
 #include <memory>
 
-namespace apexgateway::storage
+namespace hyperroute::storage
 {
 
     class RocksStorageEngine
@@ -25,4 +25,4 @@ namespace apexgateway::storage
         std::vector<rocksdb::ColumnFamilyHandle *> handles_;
     };
 
-} // namespace apexgateway::storage
+} // namespace hyperroute::storage

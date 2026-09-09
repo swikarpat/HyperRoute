@@ -1,15 +1,16 @@
 #pragma once
 
 #include <grpcpp/grpcpp.h>
-#include "apexgateway/v1/fsm_engine.grpc.pb.h"
+#include "hyperroute/v1/fsm_engine.grpc.pb.h"
 #include "fsm_engine.hpp"
 #include "rocksdb_storage.hpp"
 #include <unordered_map>
 #include <mutex>
 #include <chrono>
 
-namespace apexgateway::service
+namespace hyperroute::service
 {
+    namespace v1 = ::hyperroute::v1;
 
     class FsmComplianceServiceImpl final : public v1::FsmComplianceEngine::Service
     {
@@ -128,4 +129,4 @@ namespace apexgateway::service
         }
     };
 
-} // namespace apexgateway::service
+} // namespace hyperroute::service

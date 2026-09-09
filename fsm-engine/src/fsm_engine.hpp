@@ -8,7 +8,7 @@
 #include <cstring>
 #include <string>
 
-namespace apexgateway::core
+namespace hyperroute::core
 {
 
     constexpr size_t MAX_STATES = 16;
@@ -156,4 +156,4 @@ namespace apexgateway::core
         }
     };
 
-} // namespace apexgateway::core
+} // namespace hyperroute::core

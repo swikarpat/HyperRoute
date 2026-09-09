@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from opentelemetry import trace
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
-from google_adk.common.types import AgentTask
+from src.google_adk.common.types import AgentTask
 
 from src.telemetry import setup_telemetry, flush_telemetry, get_traceparent_metadata
 from src.aws_secrets import fetch_compliance_secrets
@@ -12,7 +12,7 @@ from src.classifier import classifier
 from src.graph import investigation_graph
 from src.fsm_client import fsm_client
 
-tracer = setup_telemetry("apexgateway-agent-runtime")
+tracer = setup_telemetry("hyperroute-agent-runtime")
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -22,7 +22,7 @@ async def lifespan(app: FastAPI):
     await investigation_graph.shutdown()
     flush_telemetry()
 
-app = FastAPI(title="ApexGateway Agent Runtime", version="1.0.0", lifespan=lifespan)
+app = FastAPI(title="HyperRoute Agent Runtime", version="1.0.0", lifespan=lifespan)
 FastAPIInstrumentor.instrument_app(app)
 
 class TransactionAlert(BaseModel):

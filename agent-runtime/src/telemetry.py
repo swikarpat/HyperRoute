@@ -6,11 +6,10 @@ from opentelemetry.sdk.resources import Resource, SERVICE_NAME
 from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
 from opentelemetry.trace.propagation.tracecontext import TraceContextTextMapPropagator
 
-def setup_telemetry(service_name: str = "apexgateway-agent-runtime") -> trace.Tracer:
+def setup_telemetry(service_name: str = "hyperroute-agent-runtime") -> trace.Tracer:
     endpoint = os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT", "localhost:4317")
     otlp_exporter = OTLPSpanExporter(endpoint=endpoint, insecure=True)
 
-    # Use a fast 200ms batch delay for rapid local development
     processor = BatchSpanProcessor(
         otlp_exporter,
         schedule_delay_millis=200,

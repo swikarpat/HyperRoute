@@ -8,6 +8,8 @@ receivers:
 
 processors:
   batch:
+    timeout: 1s
+    send_batch_size: 256
 
 exporters:
   otlp/jaeger:
