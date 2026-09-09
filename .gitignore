@@ -1,59 +1,23 @@
-# Operating System
-.DS_Store
-Thumbs.db
-
-# C++ Build & Binaries
-apexgateway-fsm-engine/build/
-apexgateway-fsm-engine/.cache/
-*.o
-*.so
-*.dylib
-fsm_engine_server
-
-# Python Virtual Environments & Bytecode
-apexgateway-agent-runtime/.venv/
-**/__pycache__/
+# Build & Dependency Artifacts
+.gradle/
+build/
+bin/
+out/
+target/
+node_modules/
+dist/
+.venv/
+__pycache__/
 *.pyc
-*.pyo
-*.pyd
-.pytest_cache/
 
-# Java Spring Boot & Gradle
-apexgateway-gateway/.gradle/
-apexgateway-gateway/build/
-apexgateway-gateway/.settings/
-apexgateway-gateway/.project
-apexgateway-gateway/.classpath
+# IDE & OS Artifacts
+.idea/
+*.iml
+.vscode/
+.DS_Store
+*.swp
 
-# Node / React UI
-apexgateway-ui/node_modules/
-apexgateway-ui/dist/
-apexgateway-ui/.vite/
-*.log
-
-# Terraform State & Providers
+# Terraform Local State
 **/.terraform/
 *.tfstate
 *.tfstate.*
-.terraform.lock.hcl
-
-# Local Storage Engines & Temp Scripts
-/tmp/apexgateway_rocksdb/
-*.sst
-*.wal
-apexgateway-infra/setup_*.sh
-
-# IDE & Editor files
-.vscode/
-.idea/
-*.swp
-
-# Python caches
-__pycache__/
-*.py[cod]
-*$py.class
-.venv/
-
-# C++ Build outputs
-apexgateway-fsm-engine/build/
-/tmp/apexgateway_rocksdb

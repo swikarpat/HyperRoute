@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #f8fafc; }
+      .card { fill: #ffffff; stroke: #cbd5e1; stroke-width: 1.5; rx: 8; }
+      .core-card { fill: #f0fdf4; stroke: #86efac; stroke-width: 2; rx: 8; }
+      .accent-card { fill: #f0f9ff; stroke: #7dd3fc; stroke-width: 1.5; rx: 8; }
+      .title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; font-weight: 700; fill: #0f172a; }
+      .subtitle { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; fill: #64748b; }
+      .badge-text { font-family: monospace; font-size: 10px; font-weight: 700; fill: #0369a1; }
+      .arrow { stroke: #0284c7; stroke-width: 2; fill: none; stroke-dasharray: 4,4; }
+      .solid-arrow { stroke: #0f172a; stroke-width: 2; fill: none; }
+      marker { fill: #0284c7; }
+    </style>
+    <marker id="arr" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#0284c7"/>
+    </marker>
+    <marker id="arr-dark" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#0f172a"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="480" class="bg" rx="12"/>
+
+  <!-- Ingress Clients -->
+  <rect x="40" y="80" width="160" height="320" class="card"/>
+  <text x="60" y="110" class="title">CLIENT TIER</text>
+  <text x="60" y="130" class="subtitle">L4 / L7 Traffic Sources</text>
+  
+  <rect x="55" y="160" width="130" height="50" class="accent-card"/>
+  <text x="68" y="190" class="badge-text">Web / Mobile Apps</text>
+  
+  <rect x="55" y="230" width="130" height="50" class="accent-card"/>
+  <text x="72" y="260" class="badge-text">B2B Partner APIs</text>
+  
+  <rect x="55" y="300" width="130" height="50" class="accent-card"/>
+  <text x="70" y="330" class="badge-text">OT / IoT Gateways</text>
+
+  <!-- Ingress Arrow -->
+  <path d="M 200 240 L 260 240" class="solid-arrow" marker-end="url(#arr-dark)"/>
+
+  <!-- HyperRoute Core Engine -->
+  <rect x="270" y="40" width="410" height="400" class="card" stroke="#0284c7" stroke-width="2"/>
+  <rect x="270" y="40" width="410" height="40" fill="#0284c7" rx="8"/>
+  <text x="290" y="65" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="14" font-weight="800" fill="#ffffff">HYPERROUTE CORE ENGINE (Java 21 / Netty)</text>
+
+  <!-- Pipeline Steps inside Gateway -->
+  <rect x="295" y="105" width="360" height="65" class="accent-card"/>
+  <text x="310" y="130" class="title">1. Reactive Ingress &amp; Zero-Trust TLS Filter</text>
+  <text x="310" y="150" class="subtitle">Non-blocking Netty event loop • mTLS termination • JWT/JWS validation</text>
+
+  <rect x="295" y="185" width="360" height="65" class="core-card"/>
+  <text x="310" y="210" class="title">2. Distributed Token Bucket Rate Limiter</text>
+  <text x="310" y="230" class="subtitle">Atomic Redis Lua scripts • Sliding-window throttle • Multi-tenant quotas</text>
+
+  <rect x="295" y="265" width="360" height="65" class="accent-card"/>
+  <text x="310" y="290" class="title">3. Resilience4j Fault-Tolerance &amp; Circuit Breakers</text>
+  <text x="310" y="310" class="subtitle">Dynamic state transition • Half-Open probe retry • Automatic fallback</text>
+
+  <rect x="295" y="345" width="360" height="70" class="accent-card"/>
+  <text x="310" y="370" class="title">4. Dynamic L7 Reverse Routing &amp; Load Balancer</text>
+  <text x="310" y="390" class="subtitle">Round-Robin &amp; Weighted P2C • Path rewrite • Zero-copy streaming</text>
+
+  <!-- Egress Arrow -->
+  <path d="M 680 240 L 740 240" class="solid-arrow" marker-end="url(#arr-dark)"/>
+
+  <!-- Upstream Microservices -->
+  <rect x="750" y="80" width="170" height="320" class="card"/>
+  <text x="770" y="110" class="title">UPSTREAM TIER</text>
+  <text x="770" y="130" class="subtitle">Internal Microservices</text>
+
+  <rect x="765" y="160" width="140" height="50" class="accent-card"/>
+  <text x="780" y="190" class="badge-text">:8081 Orders Service</text>
+
+  <rect x="765" y="230" width="140" height="50" class="accent-card"/>
+  <text x="775" y="260" class="badge-text">:8082 Payments Mesh</text>
+
+  <rect x="765" y="300" width="140" height="50" class="accent-card"/>
+  <text x="778" y="330" class="badge-text">:8083 Physical AI Fleet</text>
+</svg>
