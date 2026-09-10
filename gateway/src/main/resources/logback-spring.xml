@@ -1,0 +1,28 @@
+<configuration>
+    <springProperty scope="context" name="lokiUrl" source="loki.url" defaultValue="http://localhost:3100/loki/api/v1/push"/>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>{"timestamp":"%date{ISO8601}","level":"%level","logger":"%logger{36}","message":"%msg","trace_id":"%X{trace_id:-}","span_id":"%X{span_id:-}"}%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="LOKI" class="com.github.loki4j.logback.Loki4jAppender">
+        <http>
+            <url>${lokiUrl}</url>
+        </http>
+        <format>
+            <label>
+                <pattern>app=hyperroute,env=production</pattern>
+            </label>
+            <message>
+                <pattern>{"timestamp":"%date{ISO8601}","level":"%level","logger":"%logger{36}","message":"%msg","trace_id":"%X{trace_id:-}","span_id":"%X{span_id:-}","client_id":"%X{client_id:-}","route_id":"%X{route_id:-}"}</pattern>
+            </message>
+        </format>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="LOKI"/>
+    </root>
+</configuration>

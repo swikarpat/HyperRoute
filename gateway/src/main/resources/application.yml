@@ -6,9 +6,11 @@ spring:
     name: hyperroute-gateway
   data:
     redis:
-      host: localhost
+      host: ${REDIS_HOST:localhost}
       port: 6379
       timeout: 2000ms
+  reactor:
+    context-propagation: auto
   cloud:
     gateway:
       routes:
@@ -46,10 +48,25 @@ resilience4j:
         automaticTransitionFromOpenToHalfOpenEnabled: true
 
 management:
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+  tracing:
+    sampling:
+      probability: 1.0
   endpoints:
     web:
       exposure:
-        include: health,info,metrics,gateway
+        include: health,info,metrics,prometheus,gateway
   endpoint:
     health:
       show-details: always
+
+otel:
+  exporter:
+    otlp:
+      endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT:http://localhost:4317}
+
+loki:
+  url: ${LOKI_URL:http://localhost:3100/loki/api/v1/push}
