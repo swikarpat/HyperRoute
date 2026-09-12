@@ -221,3 +221,4 @@ When discussing HyperRoute with technical interviewers (e.g., at Capital One, AW
 
 3. **Production Discipline & Zero-Dollar Cloud Readiness**:
    > *"We designed the system with enterprise production patterns—Multi-AZ VPC, NLB, CloudFront OAC, IAM IRSA, SQS DLQ, and Resilience4j circuit breaking. To ensure reproducibility without cloud bills, we built a dual-mode Terraform setup with `free-tier.tfvars` and sub-second Moto local emulation, guaranteeing a $0.00 spend with full CI/CD test automation."*
+
