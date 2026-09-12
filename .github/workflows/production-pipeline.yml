@@ -158,7 +158,7 @@ jobs:
       - name: Build Agent Runtime Docker Image
         uses: docker/build-push-action@v5
         with:
-          context: .
+          context: agent-runtime
           file: agent-runtime/Dockerfile
           push: false
           tags: hyperroute-agent-runtime:test

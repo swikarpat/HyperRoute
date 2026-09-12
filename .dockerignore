@@ -1,0 +1,16 @@
+.git
+.github
+.venv
+.gradle
+.logs
+.pids
+.pytest_cache
+node_modules
+dist
+build
+.terraform
+*.tfstate*
+*.pyc
+*.pyo
+__pycache__
+.DS_Store
