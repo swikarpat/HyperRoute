@@ -68,9 +68,9 @@ async def handle_aws_client(reader: asyncio.StreamReader, writer: asyncio.Stream
         await writer.wait_closed()
 
 async def main():
-    server_orders = await asyncio.start_server(handle_orders_client, '127.0.0.1', 8081)
-    server_payments = await asyncio.start_server(handle_payments_faulty_client, '127.0.0.1', 8082)
-    server_aws = await asyncio.start_server(handle_aws_client, '127.0.0.1', 4566)
+    server_orders = await asyncio.start_server(handle_orders_client, None, 8081)
+    server_payments = await asyncio.start_server(handle_payments_faulty_client, None, 8082)
+    server_aws = await asyncio.start_server(handle_aws_client, None, 4566)
 
     print("✓ Upstream Mock Cluster Online:")
     print("  • Orders Service:     http://localhost:8081/api/v1/orders (Healthy)")

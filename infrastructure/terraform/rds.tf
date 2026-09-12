@@ -43,16 +43,16 @@ resource "aws_security_group" "rds" {
 }
 
 resource "aws_db_instance" "postgres" {
-  count                  = var.enable_rds ? 1 : 0
-  identifier             = "hyperroute-postgres-${var.environment}"
-  engine                 = "postgres"
-  engine_version         = "16.3"
-  instance_class         = var.rds_instance_class
-  allocated_storage      = var.rds_allocated_storage
-  max_allocated_storage  = 20 # Keep within Free Tier limits
-  storage_type           = "gp3"
-  db_name                = "hyperroute"
-  username               = "hyperroute_admin"
+  count                       = var.enable_rds ? 1 : 0
+  identifier                  = "hyperroute-postgres-${var.environment}"
+  engine                      = "postgres"
+  engine_version              = "16.3"
+  instance_class              = var.rds_instance_class
+  allocated_storage           = var.rds_allocated_storage
+  max_allocated_storage       = 20 # Keep within Free Tier limits
+  storage_type                = "gp3"
+  db_name                     = "hyperroute"
+  username                    = "hyperroute_admin"
   manage_master_user_password = true # Auto-generates and rotates secret in AWS Secrets Manager
 
   db_subnet_group_name   = aws_db_subnet_group.rds[0].name

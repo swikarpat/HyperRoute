@@ -38,8 +38,11 @@ if is_port_in_use 8000; then
   echo "✓ Port 8000 is already active (Agent Runtime is running)."
 else
   echo "==> Starting Agent Runtime on :8000..."
-  PYTHON_BIN="$ROOT_DIR/agent-runtime/.venv/bin/python"
-  if [ ! -f "$PYTHON_BIN" ]; then
+  if [ -f "$ROOT_DIR/.venv/bin/python" ]; then
+    PYTHON_BIN="$ROOT_DIR/.venv/bin/python"
+  elif [ -f "$ROOT_DIR/agent-runtime/.venv/bin/python" ]; then
+    PYTHON_BIN="$ROOT_DIR/agent-runtime/.venv/bin/python"
+  else
     PYTHON_BIN="$(which python3)"
   fi
   (cd "$ROOT_DIR" && PYTHONPATH="$ROOT_DIR/agent-runtime" "$PYTHON_BIN" -m uvicorn src.main:app --app-dir "$ROOT_DIR/agent-runtime" --host 0.0.0.0 --port 8000 > "$LOG_DIR/agent_runtime.log" 2>&1 & echo $! > "$PID_DIR/agent_runtime.pid")
@@ -64,6 +67,16 @@ else
   (cd "$ROOT_DIR/frontend" && npm run dev -- --host 0.0.0.0 --port 5173 > "$LOG_DIR/frontend.log" 2>&1 & echo $! > "$PID_DIR/frontend.pid")
   sleep 2
   echo "✓ Frontend started (PID: $(cat "$PID_DIR/frontend.pid"))."
+fi
+
+# 5. Start Upstream Mock Microservices (:8081, :8082, :4566)
+if is_port_in_use 8081; then
+  echo "✓ Port 8081 is already active (Mock Upstream Services running)."
+else
+  echo "==> Starting Mock Upstream Services on :8081, :8082, :4566..."
+  ("$PYTHON_BIN" "$ROOT_DIR/tests/mock_upstream_services.py" > "$LOG_DIR/mock_upstream.log" 2>&1 & echo $! > "$PID_DIR/mock_upstream.pid")
+  sleep 1
+  echo "✓ Mock Upstream Services started (PID: $(cat "$PID_DIR/mock_upstream.pid"))."
 fi
 
 echo ""

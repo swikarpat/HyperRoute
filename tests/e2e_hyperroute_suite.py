@@ -19,7 +19,7 @@ def run_e2e_suite():
     print("==================================================================")
 
     total_passed = 0
-    total_tests = 5
+    total_tests = 6
 
     # 1. Health & Actuator Check
     try:
@@ -73,6 +73,23 @@ def run_e2e_suite():
         if passed: total_passed += 1
     except Exception as e:
         log_test("Test 5: Cloud Telemetry & Metrics Pipeline", False, str(e))
+
+    # 6. Autonomous AI Agent & C++20 FSM Compliance Engine Evaluation
+    try:
+        alert_payload = {
+            "account_id": "ACC-E2E-TEST",
+            "amount_usd": 850000.0,
+            "sender_country": "US",
+            "receiver_country": "CH",
+            "narrative": "Standard high-net-worth liquidity transfer"
+        }
+        r = requests.post(f"{GATEWAY_URL}/api/v1/gateway/alerts", json=alert_payload, timeout=5)
+        data = r.json()
+        passed = (r.status_code == 200 and data.get("circuit_breaker_status") == "CLOSED_HEALTHY")
+        log_test("Test 6: Autonomous Agent + C++ FSM Evaluation", passed, f"Status: {data.get('status')} Latency: {data.get('gateway_latency_ms')}ms State: {data.get('final_fsm_state')}")
+        if passed: total_passed += 1
+    except Exception as e:
+        log_test("Test 6: Autonomous Agent + C++ FSM Evaluation", False, str(e))
 
     print("==================================================================")
     print(f"  FINAL SCORE: {total_passed}/{total_tests} TESTS PASSED (100% OPERATIONAL)")

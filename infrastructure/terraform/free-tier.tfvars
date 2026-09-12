@@ -5,15 +5,15 @@
 #   terraform apply -var-file=free-tier.tfvars
 # ==============================================================================
 
-aws_region            = "us-east-1"
-environment           = "free-tier"
-cluster_name          = "hyperroute-free-cluster"
+aws_region   = "us-east-1"
+environment  = "free-tier"
+cluster_name = "hyperroute-free-cluster"
 
 # Disable expensive multi-broker managed clusters (Self-hosted Kafka / SQS replaces MSK)
-enable_msk            = false
+enable_msk = false
 
 # Disable expensive multi-node ElastiCache (Local in-memory / container Redis replaces ElastiCache)
-enable_elasticache    = false
+enable_elasticache = false
 
 # Enable 100% Free-Tier eligible PostgreSQL DB (750 hours/mo free on db.t4g.micro + 20GB gp3)
 enable_rds            = true

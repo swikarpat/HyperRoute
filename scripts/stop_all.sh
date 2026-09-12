@@ -27,6 +27,7 @@ stop_pid "frontend"
 stop_pid "gateway"
 stop_pid "agent_runtime"
 stop_pid "fsm_engine"
+stop_pid "mock_upstream"
 
 # Also clean any processes on dedicated ports if lingering
 kill_port() {
@@ -43,6 +44,9 @@ kill_port 5173
 kill_port 8080
 kill_port 8000
 kill_port 50051
+kill_port 8081
+kill_port 8082
+kill_port 4566
 
 echo "✓ All HyperRoute services stopped."
 
