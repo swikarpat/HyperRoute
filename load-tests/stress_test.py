@@ -5,9 +5,11 @@ import statistics
 import httpx
 from typing import List, Dict
 
-TARGET_URL = "http://localhost:8000/api/v1/agent/evaluate"
-CONCURRENCY_LEVEL = 50
-TOTAL_REQUESTS = 1000
+import os
+
+TARGET_URL = os.getenv("TARGET_URL", "http://localhost:8000/api/v1/agent/evaluate")
+CONCURRENCY_LEVEL = int(os.getenv("CONCURRENCY", "50"))
+TOTAL_REQUESTS = int(os.getenv("TOTAL_REQUESTS", "1000"))
 
 COUNTRIES = ["US", "SG", "GB", "CH", "DE", "HK", "AE", "JP"]
 

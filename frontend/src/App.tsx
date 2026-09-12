@@ -144,9 +144,14 @@ export default function App() {
           };
         })
       );
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
-      alert('Pipeline Call Failed: ' + (err.response?.data?.detail || err.message));
+      const message = axios.isAxiosError(err)
+        ? (err.response?.data?.detail || err.message)
+        : err instanceof Error
+        ? err.message
+        : 'Unknown error occurred';
+      alert('Pipeline Call Failed: ' + message);
     } finally {
       setLoading(false);
     }

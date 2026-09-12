@@ -37,10 +37,12 @@ touch "$AGENT_DIR/generated/hyperroute/__init__.py"
 touch "$AGENT_DIR/generated/hyperroute/v1/__init__.py"
 
 # Apply relative import patch for Python 3.14
-if [ -f "$AGENT_DIR/generated/hyperroute/v1/fsm_engine_pb2_grpc.py" ]; then
-  sed -i '' 's/import hyperroute.v1.fsm_engine_pb2 as/from . import fsm_engine_pb2 as/g' "$AGENT_DIR/generated/hyperroute/v1/fsm_engine_pb2_grpc.py" 2>/dev/null || \
-  sed -i 's/import hyperroute.v1.fsm_engine_pb2 as/from . import fsm_engine_pb2 as/g' "$AGENT_DIR/generated/hyperroute/v1/fsm_engine_pb2_grpc.py"
-fi
+for f in "$AGENT_DIR/generated/hyperroute/v1/fsm_engine_pb2_grpc.py" "$AGENT_DIR/src/proto/hyperroute/v1/fsm_engine_pb2_grpc.py"; do
+  if [ -f "$f" ]; then
+    sed -i '' -e 's/from hyperroute.v1 import fsm_engine_pb2 as/from . import fsm_engine_pb2 as/g' -e 's/import hyperroute.v1.fsm_engine_pb2 as/from . import fsm_engine_pb2 as/g' "$f" 2>/dev/null || \
+    sed -i -e 's/from hyperroute.v1 import fsm_engine_pb2 as/from . import fsm_engine_pb2 as/g' -e 's/import hyperroute.v1.fsm_engine_pb2 as/from . import fsm_engine_pb2 as/g' "$f"
+  fi
+done
 
 if [ -d "$AGENT_DIR/src/proto" ]; then
   mkdir -p "$AGENT_DIR/src/proto/hyperroute/v1"

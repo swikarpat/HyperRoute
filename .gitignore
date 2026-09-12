@@ -9,6 +9,8 @@ dist/
 .venv/
 __pycache__/
 *.pyc
+.logs/
+.pids/
 
 # IDE & OS Artifacts
 .idea/

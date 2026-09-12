@@ -3,7 +3,7 @@
 import grpc
 import warnings
 
-from hyperroute.v1 import fsm_engine_pb2 as hyperroute_dot_v1_dot_fsm__engine__pb2
+from . import fsm_engine_pb2 as hyperroute_dot_v1_dot_fsm__engine__pb2
 
 GRPC_GENERATED_VERSION = '1.83.1'
 GRPC_VERSION = grpc.__version__
