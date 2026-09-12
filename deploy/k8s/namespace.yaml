@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: hyperroute
+  labels:
+    app.kubernetes.io/name: hyperroute
+    app.kubernetes.io/part-of: hyperroute-mesh
+

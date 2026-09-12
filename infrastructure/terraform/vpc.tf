@@ -12,7 +12,8 @@ resource "aws_vpc" "main" {
   enable_dns_support   = true
 
   tags = {
-    Name = "apexgateway-vpc"
+    Name        = "hyperroute-vpc"
+    Environment = var.environment
   }
 }
 
@@ -25,8 +26,9 @@ resource "aws_subnet" "public" {
   map_public_ip_on_launch = true
 
   tags = {
-    Name                     = "apexgateway-public-${local.azs[count.index]}"
+    Name                     = "hyperroute-public-${local.azs[count.index]}"
     "kubernetes.io/role/elb" = "1"
+    Environment              = var.environment
   }
 }
 
@@ -38,12 +40,13 @@ resource "aws_subnet" "private_app" {
   availability_zone = local.azs[count.index]
 
   tags = {
-    Name                              = "apexgateway-app-${local.azs[count.index]}"
+    Name                              = "hyperroute-app-${local.azs[count.index]}"
     "kubernetes.io/role/internal-elb" = "1"
+    Environment                       = var.environment
   }
 }
 
-# 3. Private Data Subnets (Amazon MSK & ElastiCache)
+# 3. Private Data Subnets (Amazon MSK, RDS PostgreSQL, ElastiCache)
 resource "aws_subnet" "private_data" {
   count             = 3
   vpc_id            = aws_vpc.main.id
@@ -51,24 +54,34 @@ resource "aws_subnet" "private_data" {
   availability_zone = local.azs[count.index]
 
   tags = {
-    Name = "apexgateway-data-${local.azs[count.index]}"
+    Name        = "hyperroute-data-${local.azs[count.index]}"
+    Environment = var.environment
   }
 }
 
 resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.main.id
-  tags   = { Name = "apexgateway-igw" }
+  tags = {
+    Name        = "hyperroute-igw"
+    Environment = var.environment
+  }
 }
 
 resource "aws_eip" "nat" {
   domain = "vpc"
-  tags   = { Name = "apexgateway-nat-eip" }
+  tags = {
+    Name        = "hyperroute-nat-eip"
+    Environment = var.environment
+  }
 }
 
 resource "aws_nat_gateway" "nat" {
   allocation_id = aws_eip.nat.id
   subnet_id     = aws_subnet.public[0].id
-  tags          = { Name = "apexgateway-nat" }
+  tags = {
+    Name        = "hyperroute-nat"
+    Environment = var.environment
+  }
 }
 
 resource "aws_route_table" "public" {
@@ -79,7 +92,10 @@ resource "aws_route_table" "public" {
     gateway_id = aws_internet_gateway.igw.id
   }
 
-  tags = { Name = "apexgateway-public-rt" }
+  tags = {
+    Name        = "hyperroute-public-rt"
+    Environment = var.environment
+  }
 }
 
 resource "aws_route_table" "private" {
@@ -90,7 +106,10 @@ resource "aws_route_table" "private" {
     nat_gateway_id = aws_nat_gateway.nat.id
   }
 
-  tags = { Name = "apexgateway-private-rt" }
+  tags = {
+    Name        = "hyperroute-private-rt"
+    Environment = var.environment
+  }
 }
 
 resource "aws_route_table_association" "public" {
@@ -102,5 +121,11 @@ resource "aws_route_table_association" "public" {
 resource "aws_route_table_association" "private_app" {
   count          = 3
   subnet_id      = aws_subnet.private_app[count.index].id
+  route_table_id = aws_route_table.private.id
+}
+
+resource "aws_route_table_association" "private_data" {
+  count          = 3
+  subnet_id      = aws_subnet.private_data[count.index].id
   route_table_id = aws_route_table.private.id
 }

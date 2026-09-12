@@ -1,5 +1,5 @@
 resource "aws_iam_role" "eks_cluster" {
-  name = "ApexGateway-EKS-ClusterRole"
+  name = "HyperRoute-EKS-ClusterRole-${var.environment}"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -9,6 +9,10 @@ resource "aws_iam_role" "eks_cluster" {
       Principal = { Service = "eks.amazonaws.com" }
     }]
   })
+
+  tags = {
+    Environment = var.environment
+  }
 }
 
 resource "aws_iam_role_policy_attachment" "eks_cluster_policy" {
@@ -28,10 +32,14 @@ resource "aws_eks_cluster" "core" {
   }
 
   depends_on = [aws_iam_role_policy_attachment.eks_cluster_policy]
+
+  tags = {
+    Environment = var.environment
+  }
 }
 
 resource "aws_iam_role" "eks_nodes" {
-  name = "ApexGateway-EKS-NodeRole"
+  name = "HyperRoute-EKS-NodeRole-${var.environment}"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -41,6 +49,10 @@ resource "aws_iam_role" "eks_nodes" {
       Principal = { Service = "ec2.amazonaws.com" }
     }]
   })
+
+  tags = {
+    Environment = var.environment
+  }
 }
 
 resource "aws_iam_role_policy_attachment" "node_worker" {
@@ -64,33 +76,37 @@ resource "aws_eks_node_group" "gateway_pool" {
   node_group_name = "gateway-ingress-pool"
   node_role_arn   = aws_iam_role.eks_nodes.arn
   subnet_ids      = aws_subnet.private_app[*].id
-  instance_types  = ["m7i.xlarge"]
+  instance_types  = [var.gateway_instance_type]
 
   scaling_config {
     desired_size = 2
     max_size     = 6
-    min_size     = 2
+    min_size     = 1
   }
 
   labels = {
     role = "gateway-ingress"
   }
 
+  tags = {
+    Environment = var.environment
+  }
+
   depends_on = [aws_iam_role_policy_attachment.node_worker]
 }
 
-# Node Group 2: Native FSM & Agent Mesh (c7i: Intel Sapphire Rapids with AVX-512)
+# Node Group 2: Native FSM & Agent Mesh (Intel Sapphire Rapids with AVX-512)
 resource "aws_eks_node_group" "fsm_agent_pool" {
   cluster_name    = aws_eks_cluster.core.name
   node_group_name = "fsm-avx512-agent-pool"
   node_role_arn   = aws_iam_role.eks_nodes.arn
   subnet_ids      = aws_subnet.private_app[*].id
-  instance_types  = ["c7i.2xlarge"]
+  instance_types  = [var.fsm_instance_type]
 
   scaling_config {
-    desired_size = 3
+    desired_size = 2
     max_size     = 10
-    min_size     = 3
+    min_size     = 1
   }
 
   labels = {
@@ -103,6 +119,10 @@ resource "aws_eks_node_group" "fsm_agent_pool" {
     key    = "dedicated"
     value  = "fsm-engine"
     effect = "NO_SCHEDULE"
+  }
+
+  tags = {
+    Environment = var.environment
   }
 
   depends_on = [aws_iam_role_policy_attachment.node_worker]

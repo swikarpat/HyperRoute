@@ -1,0 +1,95 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hyperroute-gateway
+  namespace: hyperroute
+  labels:
+    app.kubernetes.io/name: hyperroute-gateway
+    app.kubernetes.io/component: ingress-router
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: hyperroute-gateway
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: hyperroute-gateway
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app.kubernetes.io/name
+                      operator: In
+                      values: ["hyperroute-gateway"]
+                topologyKey: "topology.kubernetes.io/zone"
+      containers:
+        - name: gateway
+          image: hyperroute-gateway:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+              name: http
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "production"
+            - name: REDIS_HOST
+              value: "hyperroute-redis.hyperroute.svc.cluster.local"
+            - name: AGENT_RUNTIME_URL
+              value: "http://hyperroute-agent-service.hyperroute.svc.cluster.local:8000"
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: "http://hyperroute-otel.hyperroute.svc.cluster.local:4317"
+            - name: LOKI_URL
+              value: "http://hyperroute-loki.hyperroute.svc.cluster.local:3100/loki/api/v1/push"
+          resources:
+            requests:
+              cpu: "1000m"
+              memory: "1Gi"
+            limits:
+              cpu: "4000m"
+              memory: "2Gi"
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 5
+            timeoutSeconds: 3
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: hyperroute-gateway-hpa
+  namespace: hyperroute
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: hyperroute-gateway
+  minReplicas: 3
+  maxReplicas: 20
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 75
+

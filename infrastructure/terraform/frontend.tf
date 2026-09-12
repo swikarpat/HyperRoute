@@ -1,6 +1,12 @@
 # S3 Bucket for Static Mission Control UI Assets
 resource "aws_s3_bucket" "ui_hosting" {
-  bucket = "apexgateway-mission-control-${var.environment}"
+  bucket        = "hyperroute-mission-control-${var.environment}"
+  force_destroy = true
+
+  tags = {
+    Name        = "hyperroute-mission-control-ui"
+    Environment = var.environment
+  }
 }
 
 resource "aws_s3_bucket_public_access_block" "ui_hosting_block" {
@@ -13,8 +19,8 @@ resource "aws_s3_bucket_public_access_block" "ui_hosting_block" {
 
 # CloudFront Origin Access Control (OAC) for Zero-Trust S3 Origin
 resource "aws_cloudfront_origin_access_control" "oac" {
-  name                              = "apexgateway-oac"
-  description                       = "OAC Policy for ApexGateway S3 UI Distribution"
+  name                              = "hyperroute-oac-${var.environment}"
+  description                       = "OAC Policy for HyperRoute S3 UI Distribution"
   origin_access_control_origin_type = "s3"
   signing_behavior                  = "always"
   signing_protocol                  = "sigv4"
@@ -28,14 +34,14 @@ resource "aws_cloudfront_distribution" "cdn" {
 
   origin {
     domain_name              = aws_s3_bucket.ui_hosting.bucket_regional_domain_name
-    origin_id                = "S3-ApexGateway-UI"
+    origin_id                = "S3-HyperRoute-UI"
     origin_access_control_id = aws_cloudfront_origin_access_control.oac.id
   }
 
   default_cache_behavior {
     allowed_methods  = ["GET", "HEAD", "OPTIONS"]
     cached_methods   = ["GET", "HEAD"]
-    target_origin_id = "S3-ApexGateway-UI"
+    target_origin_id = "S3-HyperRoute-UI"
 
     forwarded_values {
       query_string = false
@@ -60,4 +66,33 @@ resource "aws_cloudfront_distribution" "cdn" {
   viewer_certificate {
     cloudfront_default_certificate = true
   }
+
+  tags = {
+    Environment = var.environment
+  }
+}
+
+# CloudFront OAC S3 Bucket Policy (Zero-Trust S3 Origin Access)
+resource "aws_s3_bucket_policy" "ui_hosting_oac_policy" {
+  bucket = aws_s3_bucket.ui_hosting.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid    = "AllowCloudFrontServicePrincipalReadOnly"
+        Effect = "Allow"
+        Principal = {
+          Service = "cloudfront.amazonaws.com"
+        }
+        Action   = "s3:GetObject"
+        Resource = "${aws_s3_bucket.ui_hosting.arn}/*"
+        Condition = {
+          StringEquals = {
+            "AWS:SourceArn" = aws_cloudfront_distribution.cdn.arn
+          }
+        }
+      }
+    ]
+  })
 }

@@ -1,0 +1,115 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hyperroute-agent-fsm
+  namespace: hyperroute
+  labels:
+    app.kubernetes.io/name: hyperroute-agent-fsm
+    app.kubernetes.io/component: reasoning-and-compliance
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: hyperroute-agent-fsm
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: hyperroute-agent-fsm
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app.kubernetes.io/name
+                      operator: In
+                      values: ["hyperroute-agent-fsm"]
+                topologyKey: "topology.kubernetes.io/zone"
+      volumes:
+        # Shared POSIX RAM-disk for zero-latency Unix Domain Socket / IPC
+        - name: shared-ipc
+          emptyDir:
+            medium: Memory
+            sizeLimit: 1Gi
+        # Local ephemeral state scratchpad
+        - name: rocksdb-scratchpad
+          emptyDir: {}
+      containers:
+        # Container 1: Python 3.14 Multi-Agent Forensic Runtime
+        - name: agent-runtime
+          image: hyperroute-agent-runtime:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+              name: http-api
+          env:
+            - name: FSM_GRPC_ENDPOINT
+              value: "127.0.0.1:50051"
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: "http://hyperroute-otel.hyperroute.svc.cluster.local:4317"
+            - name: AWS_DEFAULT_REGION
+              value: "us-east-1"
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "512Mi"
+            limits:
+              cpu: "2000m"
+              memory: "2Gi"
+          volumeMounts:
+            - mountPath: /dev/shm
+              name: shared-ipc
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 3
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+
+        # Container 2: C++20 FSM Compliance Engine
+        - name: fsm-engine
+          image: hyperroute-fsm-engine:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 50051
+              name: grpc-fsm
+          resources:
+            requests:
+              cpu: "1000m"
+              memory: "512Mi"
+            limits:
+              cpu: "4000m"
+              memory: "2Gi"
+          volumeMounts:
+            - mountPath: /dev/shm
+              name: shared-ipc
+            - mountPath: /tmp/hyperroute_rocksdb
+              name: rocksdb-scratchpad
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hyperroute-agent-service
+  namespace: hyperroute
+  labels:
+    app.kubernetes.io/name: hyperroute-agent-fsm
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: hyperroute-agent-fsm
+  ports:
+    - name: http
+      port: 8000
+      targetPort: 8000
+    - name: grpc
+      port: 50051
+      targetPort: 50051
+

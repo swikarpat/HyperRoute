@@ -18,7 +18,7 @@ provider "aws" {
 
   default_tags {
     tags = {
-      Project     = "ApexGateway"
+      Project     = "HyperRoute"
       Environment = var.environment
       ManagedBy   = "Terraform"
       Owner       = "AI-Platform-Engineering"

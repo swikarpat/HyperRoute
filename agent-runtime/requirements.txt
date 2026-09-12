@@ -1,0 +1,22 @@
+# Production dependencies for HyperRoute Agent Runtime
+fastapi==0.141.1
+uvicorn==0.52.4
+grpcio==1.83.1
+grpcio-tools==1.83.1
+protobuf==7.36.1
+pydantic==2.13.5
+pydantic_core==2.46.5
+PyYAML==6.0.3
+requests==2.34.2
+httpx==0.28.1
+boto3==1.43.90
+botocore==1.43.90
+cryptography==50.0.1
+opentelemetry-api==1.44.0
+opentelemetry-sdk==1.44.0
+opentelemetry-exporter-otlp==1.44.0
+opentelemetry-instrumentation-fastapi==0.65b0
+pytest==9.1.1
+anyio==4.15.1
+starlette==1.6.0
+
