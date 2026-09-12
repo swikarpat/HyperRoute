@@ -16,3 +16,4 @@ public record NoSqlPaymentDocument(
     Map<String, Object> complianceMetadata,
     Instant receivedAt
 ) {}
+

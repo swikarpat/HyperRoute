@@ -17,3 +17,4 @@ class BankingCoreApplicationTests {
         // Verifies the entire Spring Boot context with Virtual Threads, JPA, Redis, and Outbox loads cleanly.
     }
 }
+

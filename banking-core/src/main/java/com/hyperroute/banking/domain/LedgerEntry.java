@@ -62,3 +62,4 @@ public class LedgerEntry {
     public String getDescription() { return description; }
     public Instant getCreatedAt() { return createdAt; }
 }
+

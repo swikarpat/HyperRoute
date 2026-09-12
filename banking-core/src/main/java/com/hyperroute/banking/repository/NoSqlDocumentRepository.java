@@ -33,3 +33,4 @@ public class NoSqlDocumentRepository {
         return store.size();
     }
 }
+
