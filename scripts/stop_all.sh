@@ -36,7 +36,7 @@ kill_port() {
   pids="$(lsof -iTCP:"$port" -sTCP:LISTEN -t 2>/dev/null)"
   if [ -n "$pids" ]; then
     echo "Clearing lingering process on port $port (PIDs: $pids)..."
-    kill $pids 2>/dev/null || true
+    kill -9 $pids 2>/dev/null || true
   fi
 }
 
