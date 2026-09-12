@@ -77,14 +77,14 @@ Conversely, modern **Generative AI and Large Language Model (LLM) Multi-Agent Sy
 ```
 
 ### Detailed Execution Steps:
-1. **Edge Ingress**: The banking core dispatches an alert payload to the AWS Network Load Balancer. CloudFront terminates TLS 1.3 at edge Points of Presence.
+1. **Core Banking Staging & Edge Ingress**: The Banking Core Service (Java 21 Spring Boot) acquires an atomic Redis idempotency lock, records the raw polymorphic ISO 20022 message (`pacs.008`) in the NoSQL document store, stages the transfer in `PENDING_COMPLIANCE`, writes a Transactional Outbox event, and dispatches a synchronous screening alert to the AWS Network Load Balancer / HyperRoute Gateway.
 2. **Reactive Gateway Filtering**: Spring Cloud Gateway intercepts the request. The client API key is hashed, checking the distributed Redis cluster for rate limiting. If the downstream agent is degraded, Resilience4j instantly serves deterministic fallback heuristics (`FALLBACK_TEMPORARY_HOLD` or `FALLBACK_ESCALATED_TO_HUMAN`).
 3. **Ingestion & Token Redaction**: The Python runtime receives the payload. Before any reasoning agent touches the narrative, the **Token Vault** executes regex and deterministic masking on SSNs and credit card numbers, rehydrating them only behind cryptographic vaults.
 4. **Fast-Path Screening vs. Deep Forensic Evaluation**:
    - Nominal transaction: The statistical classifier identifies benign characteristics; routes directly to transition validation. Total time: ~4 ms.
    - Suspicious transaction: Google ADK multi-agent team (Evidence Parser, Historical Forensic Correlator, Risk Decision Agent) gathers forensic context via Directed Acyclic Graph (DAG) execution.
 5. **C++20 Hardware-Accelerated Validation**: The agent dispatches transition requests to the C++ FSM engine. The engine runs AVX-512 SIMD comparisons across 64-byte chunks per clock cycle and checks the allowed transition bitmask matrix.
-6. **Persistence & Escalation**: RocksDB updates state on local NVMe instance store. If high risk, an Amazon SNS message fans out to compliance officer queues, and the ReactFlow Mission Control dashboard updates dynamically.
+6. **Persistence, Escalation & Settlement**: RocksDB updates state on local NVMe instance store. If cleared, the Banking Core finalizes the double-entry general ledger journal ($\sum \text{Debits} = \sum \text{Credits}$); if high risk, funds are placed on compliance hold in escrow, an Amazon SNS message fans out to compliance officer queues, and the ReactFlow Mission Control dashboard updates dynamically.
 
 ---
 
@@ -92,6 +92,7 @@ Conversely, modern **Generative AI and Large Language Model (LLM) Multi-Agent Sy
 
 | Layer / Component | Technology Selected | Alternatives Considered | Decisive Rationale & Engineering Justification |
 | :--- | :--- | :--- | :--- |
+| **Banking Core Engine** | **Java 21 + Spring Boot 3.4 (Virtual Threads) + Polyglot Persistence** | Node.js, Go, pure Python | **The System of Record & Payment Rail Ingress.** Combines PostgreSQL/H2 ACID double-entry general ledger, NoSQL polymorphic document store for ISO 20022 payloads, Redis distributed idempotency keys (preventing double-charging), and Apache Kafka transactional outbox for audit event streaming. |
 | **Ingress Router** | **Java 21 + Spring Cloud Gateway (WebFlux / Netty)** | Node.js Express, Go Gin, Kong, Nginx | **Reactive non-blocking event loops.** Java 21 Virtual Threads and Netty event loops handle 50,000+ concurrent connections with deterministic memory overhead. Seamless integration with enterprise security (OAuth2, JWT), Resilience4j circuit breakers, and Redis rate limiting. |
 | **Reasoning Fabric** | **Python 3.14 + FastAPI + Google ADK (Agent Development Kit)** | AutoGen, CrewAI, pure Java | **First-class native enterprise agent hierarchy & zero-overhead execution.** Python 3.14 delivers cutting-edge asynchronous concurrency. Google ADK provides structured multi-agent DAG workflows (`GraphWorkflow`), deterministic step transitions, and native tool grounding, eliminating framework bloat while guaranteeing strict, auditable agent step attestation. |
 | **Compliance Engine** | **C++20 + AVX-512 SIMD + RocksDB + gRPC** | Rust, Java JNI, Go cgo | **Predictable sub-millisecond execution with zero garbage collection.** In high-throughput banking, GC pause spikes (even with ZGC) violate the 15 $\mu\text{s}$ FSM transition SLA. C++20 bitmask logic executes in nanoseconds, and Intel Sapphire Rapids AVX-512 vector registers inspect 64 bytes per clock cycle. |

@@ -12,10 +12,10 @@ concurrency:
 
 jobs:
   # --------------------------------------------------------------------------
-  # 1. Java 21 Spring Cloud Gateway Service Testing
+  # 1. Java 21 Spring Cloud Gateway & Banking Core Service Testing
   # --------------------------------------------------------------------------
   gateway-test:
-    name: Gateway WebFlux Unit & Integration Tests
+    name: Gateway & Banking Core Unit and Integration Tests
     runs-on: ubuntu-latest
     services:
       redis:
@@ -41,10 +41,10 @@ jobs:
       - name: Make Gradlew Executable
         run: chmod +x ./gradlew
 
-      - name: Execute Gateway Tests
+      - name: Execute Gateway & Banking Core Tests
         env:
           SPRING_DATA_REDIS_HOST: localhost
-        run: ./gradlew :gateway:test --no-daemon
+        run: ./gradlew test --no-daemon
 
   # --------------------------------------------------------------------------
   # 2. Python 3.14 Agent Runtime Testing

@@ -33,11 +33,11 @@ echo "==> [3/5] Building React TypeScript Frontend..."
 npm --prefix "$ROOT_DIR/frontend" run build
 echo "✓ Frontend built successfully."
 
-# 4. Java Gateway Integration Tests
+# 4. Java Gateway & Banking Core Integration Tests
 echo ""
-echo "==> [4/5] Running Spring Cloud Gateway Tests..."
-./gradlew :gateway:test --no-daemon
-echo "✓ Gateway unit & integration tests passed."
+echo "==> [4/5] Running Spring Cloud Gateway & Banking Core Tests..."
+./gradlew test --no-daemon
+echo "✓ Gateway and Banking Core unit & integration tests passed."
 
 # 5. Local AWS Cloud Services & Infrastructure Verification ($0.00 spend)
 echo ""

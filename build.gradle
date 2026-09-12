@@ -1,4 +1,4 @@
-// Root Gradle build delegating core lifecycle tasks to the gateway subproject
+// Root Gradle build delegating core lifecycle tasks to subprojects
 
 tasks.register("bootRun") {
     group = "application"
@@ -6,21 +6,27 @@ tasks.register("bootRun") {
     dependsOn(":gateway:bootRun")
 }
 
+tasks.register("bootRunBanking") {
+    group = "application"
+    description = "Runs the HyperRoute Banking Core application"
+    dependsOn(":banking-core:bootRun")
+}
+
 tasks.register("build") {
     group = "build"
-    description = "Builds the gateway application"
-    dependsOn(":gateway:build")
+    description = "Builds gateway and banking-core applications"
+    dependsOn(":gateway:build", ":banking-core:build")
 }
 
 tasks.register("test") {
     group = "verification"
-    description = "Runs all gateway unit and integration tests"
-    dependsOn(":gateway:test")
+    description = "Runs all unit and integration tests across gateway and banking-core"
+    dependsOn(":gateway:test", ":banking-core:test")
 }
 
 tasks.register("clean") {
     group = "build"
     description = "Cleans build outputs across subprojects"
-    dependsOn(":gateway:clean")
+    dependsOn(":gateway:clean", ":banking-core:clean")
 }
 

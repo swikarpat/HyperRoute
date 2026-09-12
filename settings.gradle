@@ -1,2 +1,3 @@
 rootProject.name = 'hyperroute'
 include 'gateway'
+include 'banking-core'
