@@ -1,1 +1,1 @@
-rootProject.name = "apexgateway-gateway"
+rootProject.name = "hyperroute-gateway"

@@ -158,7 +158,7 @@ export default function App() {
         <div className="flex items-center space-x-3">
           <ShieldAlert className="w-6 h-6 text-cyan-400" />
           <span className="text-sm font-bold tracking-wider uppercase bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
-            ApexGateway Mission Control
+            HyperRoute Mission Control
           </span>
           <span className="text-xs px-2 py-0.5 rounded bg-cyan-950 text-cyan-400 border border-cyan-800 font-mono">
             v1.0-Enterprise

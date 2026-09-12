@@ -1,0 +1,26 @@
+// Root Gradle build delegating core lifecycle tasks to the gateway subproject
+
+tasks.register("bootRun") {
+    group = "application"
+    description = "Runs the HyperRoute Spring Cloud Gateway application"
+    dependsOn(":gateway:bootRun")
+}
+
+tasks.register("build") {
+    group = "build"
+    description = "Builds the gateway application"
+    dependsOn(":gateway:build")
+}
+
+tasks.register("test") {
+    group = "verification"
+    description = "Runs all gateway unit and integration tests"
+    dependsOn(":gateway:test")
+}
+
+tasks.register("clean") {
+    group = "build"
+    description = "Cleans build outputs across subprojects"
+    dependsOn(":gateway:clean")
+}
+

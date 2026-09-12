@@ -85,6 +85,7 @@ async def evaluate_alert(alert: TransactionAlert):
         )
 
     response = {
+        "workflow_id": alert.account_id,
         "status": proposed_action,
         "routing_tier": routing_tier,
         "statistical_risk_score": round(risk_score, 4),
@@ -92,6 +93,7 @@ async def evaluate_alert(alert: TransactionAlert):
         "audit_dossier_hash": audit_hash,
         "fsm_transition_latency": f"{fsm_latency_us} μs" if fsm_latency_us > 0 else "FALLBACK_MOCK",
         "total_steps_executed": total_steps,
+        "transaction_amount": alert.amount_usd,
         "trace_id": trace_id,
         "metadata_propagated": dict(grpc_metadata)
     }

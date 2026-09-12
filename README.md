@@ -72,19 +72,57 @@ spring:
               args:
                 name: roboticsCircuitBreaker
                 fallbackUri: forward:/fallback/robotics-emergency-hold
-Build & Local Run
-Prerequisites
-Java 21 (LTS)
-Gradle 8.7+
-Redis 7.x (running on localhost:6379)
-Execution
-# Clone and enter repository
-git clone [https://github.com/swikarpat/HyperRoute.git](https://github.com/swikarpat/HyperRoute.git)
-cd HyperRoute
+```
 
-# Compile and run via Gradle
+---
+
+## Build & Local Run
+
+### Prerequisites
+* Java 21 (LTS)
+* Python 3.14+
+* Node.js 20+
+* CMake 3.24+ & C++20 compiler
+* Redis 7.x (running on `localhost:6379`)
+
+### Turnkey One-Command Automation
+```bash
+# Build all components (C++ FSM, Java Gateway, React Frontend, gRPC stubs)
+make build
+
+# Run automated tests across all tiers
+make test
+
+# Launch complete runtime mesh in background
+make start
+
+# Verify end-to-end system health
+make verify
+
+# Stop all background services
+make stop
+```
+
+### Manual Service Execution
+```bash
+# Spring Cloud Gateway
 ./gradlew clean bootRun
-Health Verification
+
+# Python Agent Runtime
+./agent-runtime/.venv/bin/python -m uvicorn src.main:app --app-dir agent-runtime --port 8000
+
+# C++20 FSM Compliance Engine
+./fsm-engine/build/fsm_engine_server
+
+# React Mission Control Dashboard
+npm --prefix frontend run dev
+```
+
+### Health Verification
+```bash
 curl -i http://localhost:8080/actuator/health
+```
 Expected response:
-{"status":"UP","components":{"redis":{"status":"UP"},"circuitBreakers":{"status":"UP"}}}
+```json
+{"status":"UP","components":{"circuitBreakers":{"status":"UP"},"discoveryComposite":{"status":"UP"},"ping":{"status":"UP"},"reactiveDiscoveryClients":{"status":"UP"},"redis":{"status":"UP"}}}
+```

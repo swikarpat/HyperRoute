@@ -1,29 +1,50 @@
 #!/usr/bin/env bash
 set -e
 
-ROOT_DIR=".."
-GRPC_CPP_PLUGIN="$(which grpc_cpp_plugin)"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+GRPC_CPP_PLUGIN="$(which grpc_cpp_plugin || echo '/opt/homebrew/bin/grpc_cpp_plugin')"
 
-mkdir -p $ROOT_DIR/apexgateway-fsm-engine/generated
-mkdir -p $ROOT_DIR/apexgateway-agent-runtime/generated
+FSM_DIR="$ROOT_DIR/fsm-engine"
+AGENT_DIR="$ROOT_DIR/agent-runtime"
 
-echo "==> Compiling C++20 Protobuf & gRPC stubs..."
+PYTHON_BIN="$AGENT_DIR/.venv/bin/python"
+[ ! -f "$PYTHON_BIN" ] && PYTHON_BIN="$(which python3)"
+
+mkdir -p "$FSM_DIR/generated"
+mkdir -p "$AGENT_DIR/generated"
+
+cd "$SCRIPT_DIR"
+
+echo "==> Compiling C++20 Protobuf & gRPC stubs into: $FSM_DIR/generated"
 protoc -I=proto \
-  --cpp_out=$ROOT_DIR/apexgateway-fsm-engine/generated \
-  --grpc_out=$ROOT_DIR/apexgateway-fsm-engine/generated \
+  --cpp_out="$FSM_DIR/generated" \
+  --grpc_out="$FSM_DIR/generated" \
   --plugin=protoc-gen-grpc="$GRPC_CPP_PLUGIN" \
-  apexgateway/v1/fsm_engine.proto
+  proto/hyperroute/v1/fsm_engine.proto
 
-echo "==> Compiling Python Protobuf & gRPC stubs..."
-$ROOT_DIR/apexgateway-agent-runtime/.venv/bin/python -m grpc_tools.protoc \
+echo "==> Compiling Python Protobuf & gRPC stubs into: $AGENT_DIR/generated"
+"$PYTHON_BIN" -m grpc_tools.protoc \
   -I=proto \
-  --python_out=$ROOT_DIR/apexgateway-agent-runtime/generated \
-  --grpc_python_out=$ROOT_DIR/apexgateway-agent-runtime/generated \
-  apexgateway/v1/fsm_engine.proto
+  --python_out="$AGENT_DIR/generated" \
+  --grpc_python_out="$AGENT_DIR/generated" \
+  proto/hyperroute/v1/fsm_engine.proto
 
 # Create package markers for Python module imports
-touch $ROOT_DIR/apexgateway-agent-runtime/generated/__init__.py
-touch $ROOT_DIR/apexgateway-agent-runtime/generated/apexgateway/__init__.py
-touch $ROOT_DIR/apexgateway-agent-runtime/generated/apexgateway/v1/__init__.py
+touch "$AGENT_DIR/generated/__init__.py"
+mkdir -p "$AGENT_DIR/generated/hyperroute/v1"
+touch "$AGENT_DIR/generated/hyperroute/__init__.py"
+touch "$AGENT_DIR/generated/hyperroute/v1/__init__.py"
 
-echo "✓ All stubs compiled cleanly."
+# Apply relative import patch for Python 3.14
+if [ -f "$AGENT_DIR/generated/hyperroute/v1/fsm_engine_pb2_grpc.py" ]; then
+  sed -i '' 's/import hyperroute.v1.fsm_engine_pb2 as/from . import fsm_engine_pb2 as/g' "$AGENT_DIR/generated/hyperroute/v1/fsm_engine_pb2_grpc.py" 2>/dev/null || \
+  sed -i 's/import hyperroute.v1.fsm_engine_pb2 as/from . import fsm_engine_pb2 as/g' "$AGENT_DIR/generated/hyperroute/v1/fsm_engine_pb2_grpc.py"
+fi
+
+if [ -d "$AGENT_DIR/src/proto" ]; then
+  mkdir -p "$AGENT_DIR/src/proto/hyperroute/v1"
+  cp -r "$AGENT_DIR/generated/hyperroute" "$AGENT_DIR/src/proto/"
+fi
+
+echo "✓ All stubs compiled cleanly under hyperroute.v1"

@@ -1,4 +1,8 @@
+import sys
+from pathlib import Path
 import pytest
+
+sys.path.insert(0, str(Path(__file__).parents[1] / "agent-runtime"))
 
 from src.a2a.protocol import A2AMessageEnvelope
 from src.a2a.supervisor import HandoffBlockedError, MultiAgentSupervisor

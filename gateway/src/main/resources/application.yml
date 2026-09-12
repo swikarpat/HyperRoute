@@ -46,6 +46,15 @@ resilience4j:
         failureRateThreshold: 50
         waitDurationInOpenState: 5s
         automaticTransitionFromOpenToHalfOpenEnabled: true
+      adkAgentService:
+        slidingWindowSize: 10
+        permittedNumberOfCallsInHalfOpenState: 3
+        failureRateThreshold: 50
+        waitDurationInOpenState: 5s
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+
+hyperroute:
+  agent-runtime-url: ${AGENT_RUNTIME_URL:http://localhost:8000}
 
 management:
   prometheus:
