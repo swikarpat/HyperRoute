@@ -14,7 +14,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
     properties = {
         "spring.data.redis.host=127.0.0.1",
-        "spring.cloud.gateway.discovery.locator.enabled=false"
+        "spring.cloud.gateway.discovery.locator.enabled=false",
+        "management.health.redis.enabled=false"
     })
 @ExtendWith(OutputCaptureExtension.class)
 class ObservabilityIntegrationTest {
@@ -43,7 +44,7 @@ class ObservabilityIntegrationTest {
     void traceparentIsCopiedToLoggingMdc(CapturedOutput output) {
         String traceId = "0123456789abcdef0123456789abcdef";
         client().get()
-            .uri("/actuator/health")
+            .uri("/actuator/info")
             .header("traceparent", "00-" + traceId + "-0123456789abcdef-01")
             .retrieve()
             .toBodilessEntity()

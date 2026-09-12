@@ -17,7 +17,8 @@ import static org.assertj.core.api.Assertions.assertThat;
     properties = {
         "spring.data.redis.host=127.0.0.1",
         "spring.cloud.gateway.discovery.locator.enabled=false",
-        "hyperroute.agent-runtime-url=http://localhost:59999" // intentionally offline port to verify circuit breaker
+        "hyperroute.agent-runtime-url=http://localhost:59999", // intentionally offline port to verify circuit breaker
+        "management.health.redis.enabled=false"
     })
 class GatewayIngressControllerTest {
 
