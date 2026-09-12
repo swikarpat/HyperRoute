@@ -4,19 +4,20 @@ set -e
 ROOT_DIR=".."
 GRPC_CPP_PLUGIN="$(which grpc_cpp_plugin || echo '/opt/homebrew/bin/grpc_cpp_plugin')"
 
-# Detect C++ and Python destination directories
 FSM_DIR="$ROOT_DIR/fsm-engine"
-[ ! -d "$FSM_DIR" ] && FSM_DIR="$ROOT_DIR/apexgateway-fsm-engine"
-
 AGENT_DIR="$ROOT_DIR/agent-runtime"
-[ ! -d "$AGENT_DIR" ] && AGENT_DIR="$ROOT_DIR/apexgateway-agent-runtime"
 
-PYTHON_BIN="$AGENT_DIR/.venv/bin/python"
-[ ! -f "$PYTHON_BIN" ] && PYTHON_BIN="$(which python3)"
+if [ -f "$ROOT_DIR/.venv/bin/python" ]; then
+  PYTHON_BIN="$ROOT_DIR/.venv/bin/python"
+elif [ -f "$AGENT_DIR/.venv/bin/python" ]; then
+  PYTHON_BIN="$AGENT_DIR/.venv/bin/python"
+else
+  PYTHON_BIN="$(which python3)"
+fi
 
 # Clean previous generated stubs
-rm -rf "$FSM_DIR/generated/hyperroute" "$FSM_DIR/generated/apexgateway"
-rm -rf "$AGENT_DIR/generated/hyperroute" "$AGENT_DIR/generated/apexgateway"
+rm -rf "$FSM_DIR/generated/hyperroute"
+rm -rf "$AGENT_DIR/generated/hyperroute"
 mkdir -p "$FSM_DIR/generated"
 mkdir -p "$AGENT_DIR/generated"
 

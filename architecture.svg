@@ -97,7 +97,7 @@
       <animate attributeName="opacity" values="0.15;0.35;0.15" dur="2.5s" repeatCount="indefinite" />
     </circle>
     <circle cx="12" cy="12" r="5" fill="#0284c7" />
-    <text x="32" y="16" class="title">ApexGateway : Enterprise Cloud Architecture Topology</text>
+    <text x="32" y="16" class="title">HyperRoute : Enterprise Cloud Architecture Topology</text>
     <text x="32" y="32" class="subtitle">Live Active Data Flow : 3-Tier Compound AI, Deterministic Ingress &amp; Sub-Millisecond Guardrails</text>
   </g>
 

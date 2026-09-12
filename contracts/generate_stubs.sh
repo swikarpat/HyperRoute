@@ -8,8 +8,13 @@ GRPC_CPP_PLUGIN="$(which grpc_cpp_plugin || echo '/opt/homebrew/bin/grpc_cpp_plu
 FSM_DIR="$ROOT_DIR/fsm-engine"
 AGENT_DIR="$ROOT_DIR/agent-runtime"
 
-PYTHON_BIN="$AGENT_DIR/.venv/bin/python"
-[ ! -f "$PYTHON_BIN" ] && PYTHON_BIN="$(which python3)"
+if [ -f "$ROOT_DIR/.venv/bin/python" ]; then
+  PYTHON_BIN="$ROOT_DIR/.venv/bin/python"
+elif [ -f "$AGENT_DIR/.venv/bin/python" ]; then
+  PYTHON_BIN="$AGENT_DIR/.venv/bin/python"
+else
+  PYTHON_BIN="$(which python3)"
+fi
 
 mkdir -p "$FSM_DIR/generated"
 mkdir -p "$AGENT_DIR/generated"
