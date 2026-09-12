@@ -1,7 +1,6 @@
 # HyperRoute: Enterprise System Design, Architecture & Engineering Deep-Dive
 
 **Document Version:** 2.0.0  
-**Target Audience:** Staff / Principal Software Engineers, Systems Architects, Infrastructure & Cloud Engineers, Technical Interviewers (Capital One / Tier-1 FinTech alignment)  
 **Status:** Approved Architectural Specification  
 
 ---
