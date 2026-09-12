@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
 set -e
 
-ROOT_DIR=".."
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 GRPC_CPP_PLUGIN="$(which grpc_cpp_plugin || echo '/opt/homebrew/bin/grpc_cpp_plugin')"
+
+cd "$SCRIPT_DIR"
 
 FSM_DIR="$ROOT_DIR/fsm-engine"
 AGENT_DIR="$ROOT_DIR/agent-runtime"
