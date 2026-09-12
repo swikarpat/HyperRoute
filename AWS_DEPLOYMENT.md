@@ -24,7 +24,7 @@ This specification codifies the production deployment architecture of HyperRoute
 ## 2. End-to-End Enterprise Architecture Topology
 
 ```
-                                  INTERNET / BANKING CORE NETWORKS
+                       INTERNET / CLIENTS / BANKING CORE SERVICE (:8090)
                                                  │
                                                  │ HTTPS / TLS 1.3 / WSS
                                                  ▼
