@@ -24,7 +24,7 @@ Conversely, modern **Generative AI and Large Language Model (LLM) Multi-Agent Sy
 **HyperRoute** resolves this dilemma by implementing a **3-Tier Polyglot Compound AI Architecture**:
 1. **Tier 0 (Ingress & Safety):** Java 21 Spring Cloud Gateway WebFlux terminates traffic, applies distributed Redis token bucket rate limiting, and enforces Resilience4j circuit breaking.
 2. **Tier 1 (Sub-Millisecond Fast Path):** An ultra-fast statistical/ML screening classifier routes 90%+ of nominal transactions through a sub-millisecond fast-path (`CLEAR_TRANSACTION` in < 4 ms).
-3. **Tier 2 (Multi-Agent Forensic Mesh):** Suspicious or high-value anomalies are escalated to an asynchronous Python 3.12 multi-agent reasoning graph (LangGraph + Google ADK).
+3. **Tier 2 (Multi-Agent Forensic Mesh):** Suspicious or high-value anomalies are escalated to an asynchronous Python 3.14 multi-agent reasoning graph orchestrated natively with the Google Agent Development Kit (Google ADK).
 4. **Deterministic Hard Guardrail Core:** A native C++20 Finite State Machine (FSM) engine with embedded RocksDB validates every single state transition with $O(1)$ bitmask logic and hardware-accelerated AVX-512 SIMD token scanning, guaranteeing mathematical compliance in $\le 15\ \mu\text{s}$.
 
 ---
@@ -52,10 +52,10 @@ Conversely, modern **Generative AI and Large Language Model (LLM) Multi-Agent Sy
                                      │
                                      ▼ 3. Reactive HTTP/2 WebClient POST
   ┌────────────────────────────────────────────────────────────────────────┐
-  │ 3. Python 3.12 Multi-Agent Runtime (:8000)                             │
+  │ 3. Python 3.14 Multi-Agent Runtime (:8000)                             │
   │    • Token Vault: PII Masking & AES-256 GCM Envelope Encryption        │
   │    • Tier 1 Fast Path: Sub-millisecond statistical screening           │
-  │    • Tier 2 Investigation: LangGraph multi-agent forensic evaluation   │
+  │    • Tier 2 Investigation: Google ADK multi-agent forensic evaluation  │
   └──────────────────────────────────┬─────────────────────────────────────┘
                                      │
                                      ▼ 4. POSIX Shared Memory IPC (< 15 µs)
@@ -82,7 +82,7 @@ Conversely, modern **Generative AI and Large Language Model (LLM) Multi-Agent Sy
 3. **Ingestion & Token Redaction**: The Python runtime receives the payload. Before any reasoning agent touches the narrative, the **Token Vault** executes regex and deterministic masking on SSNs and credit card numbers, rehydrating them only behind cryptographic vaults.
 4. **Fast-Path Screening vs. Deep Forensic Evaluation**:
    - Nominal transaction: The statistical classifier identifies benign characteristics; routes directly to transition validation. Total time: ~4 ms.
-   - Suspicious transaction: LangGraph multi-agent team (Evidence Extractor, Pattern Correlator, Risk Assessor) gathers forensic context.
+   - Suspicious transaction: Google ADK multi-agent team (Evidence Parser, Historical Forensic Correlator, Risk Decision Agent) gathers forensic context via Directed Acyclic Graph (DAG) execution.
 5. **C++20 Hardware-Accelerated Validation**: The agent dispatches transition requests to the C++ FSM engine. The engine runs AVX-512 SIMD comparisons across 64-byte chunks per clock cycle and checks the allowed transition bitmask matrix.
 6. **Persistence & Escalation**: RocksDB updates state on local NVMe instance store. If high risk, an Amazon SNS message fans out to compliance officer queues, and the ReactFlow Mission Control dashboard updates dynamically.
 
@@ -93,7 +93,7 @@ Conversely, modern **Generative AI and Large Language Model (LLM) Multi-Agent Sy
 | Layer / Component | Technology Selected | Alternatives Considered | Decisive Rationale & Engineering Justification |
 | :--- | :--- | :--- | :--- |
 | **Ingress Router** | **Java 21 + Spring Cloud Gateway (WebFlux / Netty)** | Node.js Express, Go Gin, Kong, Nginx | **Reactive non-blocking event loops.** Java 21 Virtual Threads and Netty event loops handle 50,000+ concurrent connections with deterministic memory overhead. Seamless integration with enterprise security (OAuth2, JWT), Resilience4j circuit breakers, and Redis rate limiting. |
-| **Reasoning Fabric** | **Python 3.12 + FastAPI + LangGraph / ADK** | LangChain vanilla, AutoGen, CrewAI, pure Java | **Rich AI/ML ecosystem & asynchronous DAG execution.** Python remains the undisputed standard for compound AI workflows. LangGraph provides cyclical state graph orchestration with explicit checkpointers, allowing forensic reasoning to pause and wait for external compliance callbacks. |
+| **Reasoning Fabric** | **Python 3.14 + FastAPI + Google ADK (Agent Development Kit)** | AutoGen, CrewAI, pure Java | **First-class native enterprise agent hierarchy & zero-overhead execution.** Python 3.14 delivers cutting-edge asynchronous concurrency. Google ADK provides structured multi-agent DAG workflows (`GraphWorkflow`), deterministic step transitions, and native tool grounding, eliminating framework bloat while guaranteeing strict, auditable agent step attestation. |
 | **Compliance Engine** | **C++20 + AVX-512 SIMD + RocksDB + gRPC** | Rust, Java JNI, Go cgo | **Predictable sub-millisecond execution with zero garbage collection.** In high-throughput banking, GC pause spikes (even with ZGC) violate the 15 $\mu\text{s}$ FSM transition SLA. C++20 bitmask logic executes in nanoseconds, and Intel Sapphire Rapids AVX-512 vector registers inspect 64 bytes per clock cycle. |
 | **State Storage** | **Embedded RocksDB on NVMe + Apache Kafka (MSK)** | Amazon DynamoDB, Aurora PostgreSQL, Redis | **PCIe Gen4 bus speed (< 18 $\mu\text{s}$) vs. Network Bus roundtrips (1.5–4 ms).** Mounting state to networked EBS or remote databases introduces network latency that shatters microsecond budgets. Local NVMe handles hot writes; Kafka acts as the immutable WAL for crash recovery. |
 | **Mission Control UI**| **React 19 + Vite + TypeScript + ReactFlow** | Next.js SSR, Vue, Angular | **Sub-second interactive DAG state visualization.** ReactFlow renders live FSM state transitions directly in the browser with minimal DOM thrashing. Vite enables instant HMR and 300ms production builds. |

@@ -58,7 +58,7 @@ This specification codifies the production deployment architecture of HyperRoute
      │  │ [Co-Located Single-Pod Execution Unit]                          │  │                                │
      │  │                                                                 │  │                                │
      │  │   ┌──────────────────────────────────────────────────────────┐  │  │                                │
-     │  │   │ Container 1: Python 3.12 Google ADK Orchestration Runtime│  │  │                                │
+     │  │   │ Container 1: Python 3.14 Google ADK Orchestration Runtime│  │  │                                │
      │  │   │ • Multi-Agent Fraud Forensic Pipeline                    │  │  │                                │
      │  │   │ • Asynchronous Agent Dispatch                            │  │  │                                │
      │  │   └─────────────────────────────┬────────────────────────────┘  │  │                                │
