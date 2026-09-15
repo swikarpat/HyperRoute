@@ -1,3 +1,3 @@
-from .memory_store import HierarchicalMemoryStore
+from .memory_store import HierarchicalMemoryStore, memory_store
 
-__all__ = ["HierarchicalMemoryStore"]
+__all__ = ["HierarchicalMemoryStore", "memory_store"]

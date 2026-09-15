@@ -20,7 +20,10 @@ import {
   Play,
   RotateCcw,
   UserCheck,
+  MessageSquare,
+  Bot,
 } from 'lucide-react';
+import { ForensicChatDrawer } from './components/ForensicChatDrawer';
 
 interface IngestAlertPayload {
   account_id: string;
@@ -66,6 +69,7 @@ export default function App() {
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState<IngestAlertResponse | null>(null);
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   const [accountId, setAccountId] = useState('ACC-CORP-4402');
   const [amountUsd, setAmountUsd] = useState<number>(3400000);
@@ -166,11 +170,11 @@ export default function App() {
             HyperRoute Mission Control
           </span>
           <span className="text-xs px-2 py-0.5 rounded bg-cyan-950 text-cyan-400 border border-cyan-800 font-mono">
-            v1.0-Enterprise
+            v2.0-Google-ADK
           </span>
         </div>
 
-        <div className="flex items-center space-x-6 text-xs font-mono">
+        <div className="flex items-center space-x-5 text-xs font-mono">
           <div className="flex items-center space-x-1.5">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
             <Server className="w-3.5 h-3.5 text-slate-400" />
@@ -186,6 +190,19 @@ export default function App() {
             <Zap className="w-3.5 h-3.5 text-slate-400" />
             <span className="text-slate-300">ADK Agents :8000</span>
           </div>
+
+          <button
+            onClick={() => setIsChatOpen((prev) => !prev)}
+            className={`flex items-center space-x-2 px-3 py-1.5 rounded-lg border text-xs font-mono font-bold transition shadow-md ${
+              isChatOpen
+                ? 'bg-cyan-950 text-cyan-300 border-cyan-500 shadow-cyan-950'
+                : 'bg-slate-800 hover:bg-slate-700 text-slate-200 border-slate-700'
+            }`}
+          >
+            <MessageSquare className="w-3.5 h-3.5 text-cyan-400" />
+            <span>Forensic Copilot</span>
+            <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+          </button>
         </div>
       </header>
 
@@ -274,13 +291,22 @@ export default function App() {
                     <span className="font-bold">Escalated to Human</span>
                   </div>
                   {!humanApproved ? (
-                    <button
-                      onClick={() => setHumanApproved(true)}
-                      className="w-full flex items-center justify-center space-x-1.5 bg-amber-600 hover:bg-amber-500 text-white py-1.5 rounded text-[11px] font-bold"
-                    >
-                      <UserCheck className="w-3.5 h-3.5" />
-                      <span>Authorize Freeze (${(response.transaction_amount / 1_000_000).toFixed(1)}M)</span>
-                    </button>
+                    <div className="space-y-2">
+                      <button
+                        onClick={() => setHumanApproved(true)}
+                        className="w-full flex items-center justify-center space-x-1.5 bg-amber-600 hover:bg-amber-500 text-white py-1.5 rounded text-[11px] font-bold shadow-md"
+                      >
+                        <UserCheck className="w-3.5 h-3.5" />
+                        <span>Authorize Freeze (${(response.transaction_amount / 1_000_000).toFixed(1)}M)</span>
+                      </button>
+                      <button
+                        onClick={() => setIsChatOpen(true)}
+                        className="w-full flex items-center justify-center space-x-1.5 bg-slate-900 hover:bg-slate-800 border border-cyan-800 text-cyan-300 py-1.5 rounded text-[11px] font-bold"
+                      >
+                        <Bot className="w-3.5 h-3.5 text-cyan-400" />
+                        <span>Inspect in Forensic Copilot</span>
+                      </button>
+                    </div>
                   ) : (
                     <div className="flex items-center justify-center space-x-1 text-emerald-400 text-[11px]">
                       <CheckCircle2 className="w-3.5 h-3.5" />
@@ -306,6 +332,15 @@ export default function App() {
           </ReactFlow>
         </div>
       </div>
+
+      <ForensicChatDrawer
+        isOpen={isChatOpen}
+        onClose={() => setIsChatOpen(false)}
+        accountId={accountId}
+        amountUsd={amountUsd}
+        fsmState={response?.final_fsm_state ?? null}
+        onHumanOverrideConfirm={() => setHumanApproved(true)}
+      />
     </div>
   );
 }
