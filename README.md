@@ -395,4 +395,4 @@ When presenting HyperRoute to your engineering manager, VP of Technology, or tec
 
 - **License**: Apache 2.0 Open Source License
 - **Author**: Swikar Patel ([@swikarpat](https://github.com/swikarpat))
-- **Documentation**: For the in-depth 8-section architecture whitepaper, see [docs/SYSTEM_DESIGN_AND_ARCHITECTURE.md](docs/SYSTEM_DESIGN_AND_ARCHITECTURE.md).
+- **Documentation**: For the in-depth 8-section architecture whitepaper, see [docs/SYSTEM_DESIGN_AND_ARCHITECTURE.md](docs/SYSTEM_DESIGN_AND_ARCHITECTURE.md). For the complete directory and file-by-file codebase walkthrough, see [docs/CODEBASE_GUIDE.md](docs/CODEBASE_GUIDE.md).
