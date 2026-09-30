@@ -64,6 +64,7 @@ HyperRoute is an enterprise-grade **3-Tier Polyglot Compound AI Financial Gatewa
 | **FSM Engine** | `/fsm-engine` | C++20, CMake, RocksDB, gRPC, AVX-512 | `:50051` | Deterministic compliance state machine. Evaluates transition requests against $O(1)$ bitmasks with hardware SIMD vectorization; commits state to local RocksDB in 2.79 µs. |
 | **Contracts** | `/contracts` | Protocol Buffers (proto3), gRPC | N/A | Language-neutral type definitions (`fsm_engine.proto`, `fsm_service.proto`) defining binary wire formats across C++, Python, and Java. |
 | **Infrastructure** | `/infrastructure` | Docker Compose, Terraform, Kubernetes Kustomize | Various | Backing services: Redis (:6379), Kafka (:9092), LocalStack/Moto AWS (:4566), OpenTelemetry Collector, Jaeger, Tempo, Loki, Prometheus, Grafana. |
+| **Documentation** | `/docs` | Markdown, SVG | N/A | In-depth system design whitepaper, architectural diagrams, and comprehensive codebase & directory guide. |
 
 ---
 
@@ -140,3 +141,11 @@ HyperRoute is an enterprise-grade **3-Tier Polyglot Compound AI Financial Gatewa
 * **Stop Complete Runtime**: `make stop` (or `bash scripts/stop_all.sh`)
 * **Execute Test Suites**: `make test` (Python pytest + Gradle test)
 * **Verify System Pipeline**: `make verify` (Full end-to-end automated smoke and regression checks)
+
+---
+
+## 6. Key Architectural References
+
+* **Comprehensive Codebase & Directory Breakdown**: [`docs/CODEBASE_GUIDE.md`](docs/CODEBASE_GUIDE.md)
+* **System Design & Architecture Whitepaper**: [`docs/SYSTEM_DESIGN_AND_ARCHITECTURE.md`](docs/SYSTEM_DESIGN_AND_ARCHITECTURE.md)
+* **Production AWS Deployment Runbook**: [`AWS_DEPLOYMENT.md`](AWS_DEPLOYMENT.md)
